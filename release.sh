@@ -2,7 +2,7 @@
 
 set -e
 
-if [[ -z "${CIRCLE_PULL_REQUEST}" && ("${CIRCLE_BRANCH}" == "master"  || -n "${CIRCLE_TAG}") ]]; then
+if [[ -z "${CIRCLE_PULL_REQUEST}" && ("${CIRCLE_BRANCH}" == "main"  || -n "${CIRCLE_TAG}") ]]; then
     if [[ -n "${CIRCLE_TAG}" ]]; then
         export STABILITY_TAG="${CIRCLE_TAG}"
     fi
