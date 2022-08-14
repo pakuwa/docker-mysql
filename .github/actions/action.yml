@@ -1,5 +1,5 @@
 name: Build
-description: Build mariadb image
+description: Build mysql image
 inputs:
   version:
     description: version
@@ -19,7 +19,7 @@ runs:
   steps:
   - name: Build image
     env:
-      MARIADB_VER: ${{ inputs.version }}
+      MYSQL_VER: ${{ inputs.version }}
       TAGS: ${{ inputs.tags }}
       PLATFORM: ${{ inputs.platform }}
     run: |

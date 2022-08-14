@@ -1,10 +1,7 @@
 -include env_make
 
-MARIADB_VER ?= 10.8.3
-MARIADB_VER_MINOR = $(shell echo "${MARIADB_VER}" | grep -oE '^[0-9]+\.[0-9]+')
-
-GALERA_VER ?=
-WSREP_VER ?= $(shell echo "${GALERA_VER}" | grep -oE '^[0-9]+')
+MYSQL_VER ?= 8.0.30
+MYSQL_VER_MINOR = $(shell echo "${MYSQL_VER}" | grep -oE '^[0-9]+\.[0-9]+')
 
 ALPINE_VER ?= 3.15
 
@@ -12,14 +9,8 @@ NPROC =
 
 PLATFORM ?= linux/amd64
 
-ifeq ($(BASE_IMAGE_STABILITY_TAG),)
-    BASE_IMAGE_TAG := $(ALPINE_VER)
-else
-    BASE_IMAGE_TAG := $(ALPINE_VER)-$(BASE_IMAGE_STABILITY_TAG)
-endif
-
 # Remove minor version from tag
-TAG ?= $(MARIADB_VER_MINOR)
+TAG ?= $(MYSQL_VER_MINOR)
 
 ifneq ($(STABILITY_TAG),)
     ifneq ($(TAG),latest)
@@ -27,8 +18,8 @@ ifneq ($(STABILITY_TAG),)
     endif
 endif
 
-REPO = wodby/mariadb
-NAME = mariadb-$(MARIADB_VER_MINOR)
+REPO = wawo/mysql
+NAME = mysql-$(MYSQL_VER_MINOR)
 
 .PHONY: build buildx-build buildx-push buildx-build-amd64 test push shell run start stop logs clean release
 
@@ -36,38 +27,26 @@ default: build
 
 build:
 	docker build -t $(REPO):$(TAG) \
-	    --build-arg BASE_IMAGE_TAG=$(BASE_IMAGE_TAG) \
-	    --build-arg MARIADB_VER=$(MARIADB_VER) \
-	    --build-arg GALERA_VER=$(GALERA_VER) \
-	    --build-arg WSREP_VER=$(WSREP_VER) \
+	    --build-arg MYSQL_VER=$(MYSQL_VER) \
 	    --build-arg NPROC=$(NPROC) ./
 
 # --load doesn't work with multiple platforms https://github.com/docker/buildx/issues/59
 # we need to save cache to run tests first.
 buildx-build-amd64:
 	docker buildx build --platform linux/amd64 -t $(REPO):$(TAG) \
-	    --build-arg BASE_IMAGE_TAG=$(BASE_IMAGE_TAG) \
-	    --build-arg MARIADB_VER=$(MARIADB_VER) \
-	    --build-arg GALERA_VER=$(GALERA_VER) \
-	    --build-arg WSREP_VER=$(WSREP_VER) \
+	    --build-arg MYSQL_VER=$(MYSQL_VER) \
 	    --build-arg NPROC=$(NPROC) \
 		--load \
 	    ./
 
 buildx-build:
 	docker buildx build --platform $(PLATFORM) -t $(REPO):$(TAG) \
-	    --build-arg BASE_IMAGE_TAG=$(BASE_IMAGE_TAG) \
-	    --build-arg MARIADB_VER=$(MARIADB_VER) \
-	    --build-arg GALERA_VER=$(GALERA_VER) \
-	    --build-arg WSREP_VER=$(WSREP_VER) \
+	    --build-arg MYSQL_VER=$(MYSQL_VER) \
 	    --build-arg NPROC=$(NPROC) ./
 
 buildx-push:
 	docker buildx build --push --platform $(PLATFORM) -t $(REPO):$(TAG) \
-	    --build-arg BASE_IMAGE_TAG=$(BASE_IMAGE_TAG) \
-	    --build-arg MARIADB_VER=$(MARIADB_VER) \
-	    --build-arg GALERA_VER=$(GALERA_VER) \
-	    --build-arg WSREP_VER=$(WSREP_VER) \
+	    --build-arg MYSQL_VER=$(MYSQL_VER) \
 	    --build-arg NPROC=$(NPROC) ./
 
 test:

@@ -17,8 +17,8 @@ max_try ?= 1
 wait_seconds ?= 1
 delay_seconds ?= 0
 ignore ?= ""
-charset ?= utf8
-collation ?= utf8_general_ci
+charset ?= utf8mb4
+collation ?= utf8mb4_general_ci
 
 default: query
 
@@ -84,7 +84,7 @@ mysql-check:
 	mysqlcheck --verbose -uroot -p$(root_password) -h$(host) $(db)
 
 check-ready:
-	wait_for "$(command)" "MariaDB" $(host) $(max_try) $(wait_seconds) $(delay_seconds)
+	wait_for "$(command)" "Mysql" $(host) $(max_try) $(wait_seconds) $(delay_seconds)
 
 check-live:
 	@echo "OK"

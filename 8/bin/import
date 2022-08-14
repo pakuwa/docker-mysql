@@ -28,8 +28,8 @@ count=$(echo "${sql_file}" | wc -l | grep -Eo '[0-9]+')
 
 if [[ "${count}" == 1 ]]; then
     query "REVOKE ALL PRIVILEGES ON \`${db}\`.* FROM '${user}'@'%';"
-    query "DROP DATABASE IF EXISTS ${db};"
-    query "CREATE DATABASE ${db};"
+    query "DROP DATABASE IF EXISTS \`${db}\`;"
+    query "CREATE DATABASE \`${db}\`;"
 
     restore_privileges
     query 'FLUSH PRIVILEGES;'
